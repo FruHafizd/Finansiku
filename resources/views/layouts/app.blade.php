@@ -16,7 +16,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased" x-data="{ showCalendar: false }">
        <div class="min-h-screen bg-gray-50 flex flex-col">
             <livewire:layout.navigation />
 
@@ -158,6 +158,9 @@
                 to   { width: 0%; }
             }
         </style>
+
+        {{-- Financial Calendar Slide-over --}}
+        <livewire:financial-calendar />
 
         @livewireScripts
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
