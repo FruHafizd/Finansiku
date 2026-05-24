@@ -16,23 +16,39 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
     </head>
-    <body class="font-sans antialiased" x-data="{ showCalendar: false }">
-       <div class="min-h-screen bg-gray-50 flex flex-col">
+    <body class="font-sans antialiased text-[#0F172A]" x-data="{ sidebarOpen: false, showCalendar: false }">
+        <div class="min-h-screen bg-[#F8FAFC] flex">
+            <!-- Sidebar Navigation -->
             <livewire:layout.navigation />
 
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+            <!-- Main Content Area -->
+            <div class="flex-1 lg:ml-64 md:ml-20 flex flex-col min-h-screen">
+                <!-- Mobile top bar (hamburger + logo) -->
+                <header class="md:hidden sticky top-0 z-40 bg-white border-b border-[#E2E8F0] px-4 h-14 flex items-center">
+                    <button @click="sidebarOpen = true" class="text-[#64748B] hover:text-[#0F172A] focus:outline-none p-1 -ml-1 rounded-md">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <div class="ml-3 flex items-center">
+                        <x-application-logo class="block h-8 w-auto fill-current text-gray-800" />
                     </div>
                 </header>
-            @endif
 
-            <main class="flex-1">
-                {{ $slot }}
-            </main>
+                @if (isset($header))
+                    <header class="bg-white shadow-sm border-b border-[#E2E8F0]">
+                        <div class="py-6 px-4 sm:px-6 lg:px-8">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endif
 
-            <x-footer />
+                <main class="flex-1 p-4 sm:p-6 lg:p-8">
+                    {{ $slot }}
+                </main>
+
+                <x-footer />
+            </div>
         </div>
 
         {{-- Budget Alert Toast --}}
