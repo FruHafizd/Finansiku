@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Budget;
 use App\Models\Transaction;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class FinancialScoreService
@@ -12,19 +11,10 @@ class FinancialScoreService
     public function calculateCurrentMonthScore($userId)
     {
         $now = Carbon::now();
-        $startDate = $now->copy()->startOfMonth();
-        $endDate = $now->copy()->endOfMonth();
 
         // 1. Data Pemasukan & Pengeluaran
-        $income = Transaction::where('user_id', $userId)
-            ->where('type', 'income')
-            ->whereBetween('date', [$startDate, $endDate])
-            ->sum('amount');
-
-        $expense = Transaction::where('user_id', $userId)
-            ->where('type', 'expense')
-            ->whereBetween('date', [$startDate, $endDate])
-            ->sum('amount');
+        $income  = (float) Transaction::currentMonth()->income()->sum('amount');
+        $expense = (float) Transaction::currentMonth()->expense()->sum('amount');
 
         // 2. Data Budget
         $totalBudget = Budget::where('user_id', $userId)
@@ -33,9 +23,7 @@ class FinancialScoreService
             ->sum('limit_amount');
 
         // 3. Consistency (Transaction Count)
-        $transactionCount = Transaction::where('user_id', $userId)
-            ->whereBetween('date', [$startDate, $endDate])
-            ->count();
+        $transactionCount = Transaction::currentMonth()->count();
 
         // --- Perhitungan Skor ---
 
@@ -62,8 +50,7 @@ class FinancialScoreService
             }
         } else {
             // Fallback: Jika tidak ada budget, bandingkan dengan rata-rata pengeluaran 3 bulan terakhir
-            $avgExpense = Transaction::where('user_id', $userId)
-                ->where('type', 'expense')
+            $avgExpense = Transaction::expense()
                 ->whereBetween('date', [$now->copy()->subMonths(3)->startOfMonth(), $now->copy()->subMonth()->endOfMonth()])
                 ->sum('amount') / 3;
 

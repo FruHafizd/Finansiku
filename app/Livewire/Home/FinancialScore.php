@@ -2,19 +2,16 @@
 
 namespace App\Livewire\Home;
 
+use App\Livewire\Concerns\RefreshesOnTransactionChange;
 use App\Services\FinancialScoreService;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
 class FinancialScore extends Component
 {
+    use RefreshesOnTransactionChange;
+
     public $scoreData;
-    
-    protected $listeners = [
-        'transaction-created' => 'refreshScore',
-        'transaction-deleted' => 'refreshScore',
-        'transaction-updated' => 'refreshScore',
-    ];
 
     public function mount(FinancialScoreService $service)
     {
